@@ -23,12 +23,12 @@ class GameTest(unittest.TestCase):
         self._roll_many(1, 18)
         self.assertEqual(10+1+18, self.game.total_score())
 
-    # def test_one_spare(self):
-    #     self._roll_spare()
-    #     self.game.roll(3)
-    #     self._roll_many(0, 17)
-    #     self.assertEqual(16, self.game.total_score())
-    #
+    def test_one_spare(self):
+        self._roll_spare()
+        self.game.roll(3)
+        self._roll_many(0, 17)
+        self.assertEqual(16, self.game.total_score())
+
     # def test_one_strike(self):
     #     self.game.roll(10)
     #     self.game.roll(3)
