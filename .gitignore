@@ -1,6 +1,8 @@
 *.pyc
 *_pb2.py
 
+#Intellij & PyCharm
+.idea/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

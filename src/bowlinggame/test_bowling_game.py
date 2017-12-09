@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*- #
 import unittest
 
-from bowling_game import Game
+from src.bowlinggame.bowling_game import Game
 
 
 class GameTest(unittest.TestCase):
