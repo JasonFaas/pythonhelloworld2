@@ -79,3 +79,27 @@ def answer_seven():
 
 
 print(str(answer_seven()) + "\t\t:The county with the largest fluctuation during 2010 through 2015")
+
+
+def answer_eight():
+    census_df_a8 = census_df.copy()
+    census_df_a8.where(census_df_a8['SUMLEV'] == 50, inplace=True)
+    census_df_a8.dropna(inplace=True)
+    census_df_a8.where(census_df_a8['REGION'] != 3, inplace=True)
+    census_df_a8.dropna(inplace=True)
+    census_df_a8.where(census_df_a8['REGION'] != 4, inplace=True)
+    census_df_a8.dropna(inplace=True)
+    census_df_a8 = census_df_a8[census_df_a8['CTYNAME'].str.contains("Washington", na=False)]
+    census_df_a8.where(census_df_a8['POPESTIMATE2015'] > census_df_a8['POPESTIMATE2014'], inplace=True)
+    census_df_a8.dropna(inplace=True)
+    columns_to_keep = [
+        'STNAME',
+        'CTYNAME'
+    ]
+    census_df_a8 = census_df_a8[columns_to_keep]
+    # print("HELPER243:\t\t" + str(census_df_a8))
+    return census_df_a8
+
+
+print(str(answer_eight()) + "\t\t:5x2 df")
+
