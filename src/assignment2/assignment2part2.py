@@ -31,7 +31,24 @@ print(str(answer_five()) + "\t\t:The state with the most counties")
 
 
 def answer_six():
-    return "YOUR ANSWER HERE"
+    census_df_a6 = census_df.copy()
+    census_df_a6.where(census_df_a6['SUMLEV'] == 50, inplace=True)
+    census_df_a6.dropna(inplace=True)
+    columns_to_keep = ['STNAME', 'CENSUS2010POP']
+    census_df_a6 = census_df_a6[columns_to_keep]
+    census_df_a6.sort_values(columns_to_keep, ascending=False, inplace=True)
+    # print("HELPER:\n" + str(census_df_a6.head(8)))
+    top_3_counties_each_state = census_df_a6.groupby('STNAME').head(3)
+    top_3_total_each_state = top_3_counties_each_state.groupby(by=['STNAME']).sum()
+
+    top_3_states_by_county_size_df = top_3_total_each_state.sort_values(['CENSUS2010POP'], ascending=False, inplace=False).head(3)
+    # print("HELPER123:\n" + str(top_3_states_by_county_size_df))
+    top_3_as_list = top_3_states_by_county_size_df.index.values
+    # print("HELPER456:\n" + str(top_3_as_list))
+    # print("HELPER:\n" + str(census_df_a6.groupby('STNAME').head(3).head(12)))
 
 
-print(str(answer_six()) + "\t\t:")
+    return top_3_as_list
+
+
+print(str(answer_six()) + "\t\t:The 3 states with the 3 largest counties")
