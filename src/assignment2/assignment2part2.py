@@ -47,8 +47,9 @@ def answer_six():
     # print("HELPER456:\n" + str(top_3_as_list))
     # print("HELPER:\n" + str(census_df_a6.groupby('STNAME').head(3).head(12)))
 
+    #print("HELPER765:\t\t" + str(type(list(top_3_as_list))))
 
-    return top_3_as_list
+    return list(top_3_as_list)
 
 
 print(str(answer_six()) + "\t\t:The 3 states with the 3 largest counties")

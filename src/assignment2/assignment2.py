@@ -7,8 +7,6 @@ def hello_world():
 print(hello_world())
 
 
-import pandas as pd
-
 df = pd.read_csv('olympics.csv', index_col=0, skiprows=1)
 
 for col in df.columns:
@@ -50,15 +48,16 @@ print(answer_two() + "\t:The country with the largest difference in summer and w
 
 
 def answer_three():
-    only_gold_summer = df.where(df['Gold'] > 0)
-    only_gold_winter = df.where(df['Gold.1'] > 0)
-    only_gold_both = only_gold_summer.where(df['Gold.1'] > 0)
+    df_a3 = df.copy()
+    only_gold_summer = df_a3.where(df_a3['Gold'] > 0)
+    only_gold_winter = df_a3.where(df_a3['Gold.1'] > 0)
+    only_gold_both = only_gold_summer.where(df_a3['Gold.1'] > 0)
     only_gold_both['summer_minus_winter_all_over_total'] = (only_gold_both['Gold'] - only_gold_both['Gold.1']) / only_gold_both['Combined total']
 
     #print("HELPER:" + str(only_gold_summer['Gold'].count()))
     #print("HELPER:" + str(only_gold_winter['Gold'].count()))
     #print("HELPER:" + str(only_gold_both['Gold'].count()))
-    #print("HELPER:" + str(df['Gold'].count()))
+    #print("HELPER:" + str(df_a3['Gold'].count()))
     return only_gold_both['summer_minus_winter_all_over_total'].idxmax()
 
 
@@ -85,6 +84,12 @@ def answer_four():
     Points.drop('Silver.2', axis=1, inplace=True)
     Points.drop('Bronze.2', axis=1, inplace=True)
     Points.drop('Combined total', axis=1, inplace=True)
+    # Points = Points.iloc[:,:]
+    # print("HELPER874:\t\t" + str(Points['Points'].values))
+    # print("HELPER874:\t\t" + str(Points.index.values))
+    Points = pd.Series(Points['Points'].values, index=Points.index.values)
+    # print("HELPER874:\t\t" + str(type(Points)))
+
     return Points
 
 
