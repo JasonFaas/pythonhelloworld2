@@ -52,3 +52,30 @@ def answer_six():
 
 
 print(str(answer_six()) + "\t\t:The 3 states with the 3 largest counties")
+
+
+def answer_seven():
+    census_df_a7 = census_df.copy()
+    census_df_a7.where(census_df_a7['SUMLEV'] == 50, inplace=True)
+    census_df_a7.dropna(inplace=True)
+    columns_to_keep = [
+        'STNAME',
+        'CTYNAME',
+        'POPESTIMATE2010',
+        'POPESTIMATE2011',
+        'POPESTIMATE2012',
+        'POPESTIMATE2013',
+        'POPESTIMATE2014',
+        'POPESTIMATE2015'
+        ]
+    census_df_a7 = census_df_a7[columns_to_keep]
+    census_df_a7['max_pop_est'] = census_df_a7.max(axis=1)
+    census_df_a7['min_pop_est'] = census_df_a7.min(axis=1)
+    census_df_a7['abs_diff_est'] = census_df_a7['max_pop_est'] - census_df_a7['min_pop_est']
+    idxmax_diff = census_df_a7['abs_diff_est'].idxmax()
+
+    # print("HELPER432:\t" + str(census_df_a7.head(8)))
+    return census_df_a7.loc[idxmax_diff]['CTYNAME']
+
+
+print(str(answer_seven()) + "\t\t:The county with the largest fluctuation during 2010 through 2015")
