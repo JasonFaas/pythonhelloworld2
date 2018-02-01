@@ -51,6 +51,10 @@ def isWordGuessed(secretWord, lettersGuessed):
       False otherwise
     '''
     # FILL IN YOUR CODE HERE...
+    for swChar in secretWord:
+        if swChar not in lettersGuessed:
+            return False
+    return True
 
 
 
@@ -62,7 +66,17 @@ def getGuessedWord(secretWord, lettersGuessed):
       what letters in secretWord have been guessed so far.
     '''
     # FILL IN YOUR CODE HERE...
+    return_string = ''
+    for swChar in secretWord:
+        if swChar not in lettersGuessed:
+           return_string = return_string + '_ '
+        else:
+            return_string += swChar
+    return return_string.strip()
 
+
+
+import string
 
 
 def getAvailableLetters(lettersGuessed):
@@ -72,6 +86,10 @@ def getAvailableLetters(lettersGuessed):
       yet been guessed.
     '''
     # FILL IN YOUR CODE HERE...
+    lowercase = string.ascii_lowercase
+    for charGuessed in lettersGuessed:
+        lowercase = lowercase.replace(charGuessed, '')
+    return lowercase
     
 
 def hangman(secretWord):
