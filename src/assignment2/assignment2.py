@@ -50,9 +50,10 @@ print(answer_two() + "\t:The country with the largest difference in summer and w
 def answer_three():
     df_a3 = df.copy()
     only_gold_summer = df_a3.where(df_a3['Gold'] > 0)
-    only_gold_winter = df_a3.where(df_a3['Gold.1'] > 0)
+    only_gold_summer.dropna(inplace=True)
     only_gold_both = only_gold_summer.where(df_a3['Gold.1'] > 0)
-    only_gold_both['summer_minus_winter_all_over_total'] = (only_gold_both['Gold'] - only_gold_both['Gold.1']) / only_gold_both['Combined total']
+    only_gold_both.dropna(inplace=True)
+    only_gold_both['summer_minus_winter_all_over_total'] = (only_gold_both['Gold'] - only_gold_both['Gold.1']) / (only_gold_both['Gold'] + only_gold_both['Gold.1'])
 
     #print("HELPER:" + str(only_gold_summer['Gold'].count()))
     #print("HELPER:" + str(only_gold_winter['Gold'].count()))
