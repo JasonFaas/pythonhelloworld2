@@ -133,6 +133,62 @@ def answer_three():
     avgGDP = pd.Series(Top15['average'].values, index=Top15.index.values)
     return avgGDP
 
-print("A3:" + str(answer_three()) + " average GDP over the last 10 years for each country")
+# print("A3:" + str(answer_three()) + " average GDP over the last 10 years for each country")
 
 
+def answer_five():
+    import pandas as pd
+    import numpy as np
+    Top15 = answer_one()
+    # agg = Top15.agg({'Energy Supply per Capita': np.average})
+    agg = Top15['Energy Supply per Capita'].mean()
+    return agg
+
+print("A5:" + str(answer_five()) + " mean Energy Supply per Capita")
+
+
+def answer_six():
+    Top15 = answer_one()
+    idxmax = Top15['% Renewable'].idxmax()
+    # print(str(idxmax) + " ")
+    value2 = Top15['% Renewable'][idxmax]
+    # print(str(value2) + " ")
+    return (idxmax, value2)
+
+print("A6:" + str(answer_six()) + " maximum % Renewable and what is the percentage")
+
+
+def answer_seven():
+    Top15 = answer_one()
+    Top15['citations_ratio'] = Top15['Self-citations'] / Top15['Citations']
+    idxmax = Top15['citations_ratio'].idxmax()
+    value2 = Top15['citations_ratio'][idxmax]
+    return (idxmax, value2)
+
+print("A7:" + str(answer_seven()) + " Self-Citations to Total Citations. What is the maximum value for this new column, and what country has the highest ratio")
+
+
+def answer_eight():
+    Top15 = answer_one()
+    Top15['est_pop'] = Top15['Energy Supply'] / Top15['Energy Supply per Capita']
+    Top15 = Top15.sort_values('est_pop', ascending=False)
+    return Top15.head(3)['est_pop'].index[2]
+
+print("A8:" + str(answer_eight()) + " Energy Supply and Energy Supply per capita. What is the third most populous country according to this estimate?")
+
+def answer_ten():
+    import numpy as np
+    import pandas as pd
+    Top15 = answer_one()
+    averageRenew = Top15['% Renewable'].mean()
+    Top15['aboveBelow'] = Top15['% Renewable'] > averageRenew
+    Top15['aboveBelow'] = Top15['aboveBelow'].replace(False, int(0))
+    Top15['aboveBelow'] = Top15['aboveBelow'].replace(True, int(1))
+    Top15['aboveBelow'] = Top15['aboveBelow'].astype(np.int64)
+
+    aboveBelow = pd.Series(Top15['aboveBelow'].values, index=Top15.index.values)
+    # aboveBelow.astype(np.int64)
+
+    return aboveBelow
+
+print("A10:" + str(answer_ten()) + " Rank series % renewable")
