@@ -110,13 +110,19 @@ def answer_two():
     # print(len(gdp.index) - 162)
 
     # print(energy)
-    first2 = pd.merge(ScimEn, gdp, how='outer', left_index=True, right_index=True)
-    all3 = pd.merge(first2, energy, how='outer', left_index=True, right_index=True)
-    print(len(all3.index))
-    #print(all3)
-    all3 = all3.sort_values('Rank')
+    first2Outer = pd.merge(ScimEn, gdp, how='outer', left_index=True, right_index=True)
+    all3Outer = pd.merge(first2Outer, energy, how='outer', left_index=True, right_index=True)
 
-    return all3.head(15)
+    first2 = pd.merge(ScimEn, gdp, how='inner', left_index=True, right_index=True)
+    all3 = pd.merge(first2, energy, how='inner', left_index=True, right_index=True)
 
-answer_two()
-# print(str(answer_one()) + "Rows lossed")
+    return len(all3Outer.index) - len(all3)
+
+# answer_two()
+print("A2:" + str(answer_two()) + " Rows lossed")
+
+
+def answer_three():
+    Top15 = answer_one()
+    return "ANSWER"
+
