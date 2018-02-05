@@ -123,6 +123,16 @@ print("A2:" + str(answer_two()) + " Rows lossed")
 
 
 def answer_three():
+    import pandas as pd
+    import numpy as np
     Top15 = answer_one()
-    return "ANSWER"
+    Top15['average'] = (Top15['2006'] + Top15['2007'] + Top15['2008'] + Top15['2009'] + Top15['2010'] + Top15['2011'] + Top15['2012'] + Top15['2013'] + Top15['2014'] + Top15['2015']) / 10
+    # avgGDP = np.mean(Top15['2006','2007','2008','2009','2010','2011','2012','2013','2014','2015'])
+    
+    
+    avgGDP = pd.Series(Top15['average'].values, index=Top15.index.values)
+    return avgGDP
+
+print("A3:" + str(answer_three()) + " average GDP over the last 10 years for each country")
+
 
