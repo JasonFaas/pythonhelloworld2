@@ -1,5 +1,6 @@
 import pandas as pd
 
+
 def hello_world():
     return "Hello World!"
 
@@ -9,6 +10,7 @@ print(hello_world())
 
 census_df = pd.read_csv('census.csv')
 #census_df.head()
+
 
 def answer_five():
     census_df_a5 = census_df.copy()
