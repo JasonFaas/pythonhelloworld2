@@ -135,6 +135,31 @@ def answer_three():
 
 # print("A3:" + str(answer_three()) + " average GDP over the last 10 years for each country")
 
+def answer_four():
+    Top15 = answer_one()
+    columns_to_keep = [
+        '2006',
+        '2007',
+        '2008',
+        '2009',
+        '2010',
+        '2011',
+        '2012',
+        '2013',
+        '2014',
+        '2015'
+    ]
+    Top15 = Top15[columns_to_keep]
+    Top15['mean_gdp'] = Top15.mean(axis=1)
+    Top15['gdp_change'] = Top15['2015'] - Top15['2006']
+    Top15 = Top15.sort_values('mean_gdp', ascending=False)
+    # Top15['mean_gdp'][6]
+    # print(Top15)
+
+    return Top15['gdp_change'][5]
+
+print("A4:" + str(answer_four()) + " By how much had the GDP changed over the 10 year span for the country with the 6th largest average GDP")
+
 
 def answer_five():
     import pandas as pd
@@ -191,4 +216,16 @@ def answer_ten():
 
     return aboveBelow
 
-print("A10:" + str(answer_ten()) + " Rank series % renewable")
+# print("A10:" + str(answer_ten()) + " Rank series % renewable")
+
+
+# def answer_thirteen():
+#     import numpy as np
+#     import pandas as pd
+#     Top15 = answer_one()
+#     Top15['est_pop'] = "Number: {:,}".format(Top15['Energy Supply'] / Top15['Energy Supply per Capita'])
+#     est_pop = pd.Series(Top15['est_pop'].values, index=Top15.index.values)
+#     return est_pop
+#
+#
+# print("A13:" + str(answer_thirteen()) + " what")
