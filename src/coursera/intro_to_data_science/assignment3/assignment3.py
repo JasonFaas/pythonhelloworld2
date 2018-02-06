@@ -240,14 +240,25 @@ def answer_ten():
 
 # print("A10:" + str(answer_ten()) + " Rank series % renewable")
 
+def add_commas_to_float_as_string(thisparam):
+    # print("Number: {:,}".format(12345))
+    # print(thisparam)
+    find___ = thisparam[0:thisparam.find('.')]
+    # print(find___)
+    # print()
+    thisparam_find___ = "{:,}".format(int(find___)) + thisparam[thisparam.find('.'):]
+    return thisparam_find___
 
-# def answer_thirteen():
-#     import numpy as np
-#     import pandas as pd
-#     Top15 = answer_one()
-#     Top15['est_pop'] = "Number: {:,}".format(Top15['Energy Supply'] / Top15['Energy Supply per Capita'])
-#     est_pop = pd.Series(Top15['est_pop'].values, index=Top15.index.values)
-#     return est_pop
-#
-#
-# print("A13:" + str(answer_thirteen()) + " what")
+def answer_thirteen():
+    import numpy as np
+    import pandas as pd
+    Top15 = answer_one()
+    Top15['est_pop'] = Top15['Energy Supply'] / Top15['Energy Supply per Capita']
+    Top15['est_pop_comma'] = Top15['est_pop'].astype(str)
+    repl = lambda m: add_commas_to_float_as_string(m.group(0))
+    Top15['est_pop_comma'] = Top15['est_pop_comma'].str.replace(r'.*', repl)
+    PopEst = pd.Series(Top15['est_pop_comma'].values, index=Top15.index.values)
+    return PopEst
+
+
+print("A13:" + str(answer_thirteen()) + " what")
