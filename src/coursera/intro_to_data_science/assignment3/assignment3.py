@@ -133,7 +133,7 @@ def answer_three():
     avgGDP = pd.Series(Top15['average'].values, index=Top15.index.values)
     return avgGDP
 
-# print("A3:" + str(answer_three()) + " average GDP over the last 10 years for each country")
+print("A3:" + str(type(answer_three())) + " average GDP over the last 10 years for each country")
 
 def answer_four():
     Top15 = answer_one()
@@ -200,6 +200,28 @@ def answer_eight():
     return Top15.head(3)['est_pop'].index[2]
 
 print("A8:" + str(answer_eight()) + " Energy Supply and Energy Supply per capita. What is the third most populous country according to this estimate?")
+
+def answer_nine():
+    Top15 = answer_one()
+    Top15['PopEst'] = Top15['Energy Supply'] / Top15['Energy Supply per Capita']
+    Top15['Citable docs per Capita'] = Top15['Citable documents'] / Top15['PopEst']
+    corr = Top15['Energy Supply per Capita'].corr(Top15['Citable docs per Capita'])
+    # print(corr)
+    return corr
+
+print("A9:" + str(answer_nine()) + " Pearson correlation for Energy Supply per Capita vs. Citable docs per Capita")
+
+
+def plot9():
+    import matplotlib.pyplot as plt
+
+    Top15 = answer_one()
+    Top15['PopEst'] = Top15['Energy Supply'] / Top15['Energy Supply per Capita']
+    Top15['Citable docs per Capita'] = Top15['Citable documents'] / Top15['PopEst']
+    Top15.plot(x='Citable docs per Capita', y='Energy Supply per Capita', kind='scatter', xlim=[0, 0.0006])
+    # plt.show()
+
+plot9()
 
 def answer_ten():
     import numpy as np
