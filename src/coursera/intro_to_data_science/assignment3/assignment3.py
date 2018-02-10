@@ -239,7 +239,83 @@ def answer_ten():
     return aboveBelow
 
 # print("A10:" + str(answer_ten()) + " Rank series % renewable")
+def getTop15WithContinent(Top15):
+    import pandas as pd
+    ContinentDict = {'China': 'Asia',
+                     'United States': 'North America',
+                     'Japan': 'Asia',
+                     'United Kingdom': 'Europe',
+                     'Russian Federation': 'Europe',
+                     'Canada': 'North America',
+                     'Germany': 'Europe',
+                     'India': 'Asia',
+                     'France': 'Europe',
+                     'South Korea': 'Asia',
+                     'Italy': 'Europe',
+                     'Spain': 'Europe',
+                     'Iran': 'Asia',
+                     'Australia': 'Australia',
+                     'Brazil': 'South America'}
+    # ContinentDict = pd.DataFrame({'Country' : ContinentDict.keys(), 'Continent':ContinentDict.values()})
+    continent_df = pd.DataFrame()
+    continent_df['Country'] = ContinentDict.keys()
+    continent_df['Continent'] = ContinentDict.values()
+    continent_df = continent_df.set_index('Country')
+    # print(continent_df)
+    Top15 = pd.merge(Top15, continent_df, how='inner', left_index=True, right_index=True)
+    return Top15
 
+
+def answer_eleven():
+    import numpy as np
+    import pandas as pd
+    Top15 = answer_one()
+    Top15['PopEst'] = Top15['Energy Supply'] / Top15['Energy Supply per Capita']
+    columns_to_keep = [
+        'PopEst'
+    ]
+    Top15 = Top15[columns_to_keep]
+    Top15 = getTop15WithContinent(Top15)
+    group_mean = Top15.groupby('Continent')['PopEst'].mean()
+    group_size = Top15.groupby('Continent')['PopEst'].count()
+    group_std = Top15.groupby('Continent')['PopEst'].std()
+    group_sum = Top15.groupby('Continent')['PopEst'].sum()
+
+    return_df = pd.DataFrame({'Continent':group_mean.index, 'mean':group_mean.values})
+    # return_df['Continent'] = group_mean.keys()
+    # return_df['mean'] = group_mean.values()
+    return_df = return_df.set_index('Continent')
+
+    return_df = mergeDfAndSeries(return_df, group_size, 'size')
+    return_df = mergeDfAndSeries(return_df, group_std, 'std')
+    return_df = mergeDfAndSeries(return_df, group_sum, 'sum')
+
+
+    return return_df
+
+def mergeDfAndSeries(return_df, series_to_merge, series_values_name):
+    import pandas as pd
+    size_df = pd.DataFrame({'Continent': series_to_merge.index, series_values_name: series_to_merge.values})
+    size_df = size_df.set_index('Continent')
+    return_df = pd.merge(return_df, size_df, how='inner', left_index=True, right_index=True)
+    return return_df
+
+
+print("A11:" + str(type(answer_eleven())) + " sample size, and the sum, mean, and std deviation")
+
+def answer_twelve():
+    import pandas as pd
+    Top15 = answer_one()
+    Top15 = getTop15WithContinent(Top15)
+    Top15['bins'] = pd.cut(Top15['% Renewable'], 5)
+    # print(Top15)
+    Top15 = Top15.groupby(['bins', 'Continent'])['% Renewable'].count()
+    # Top15 = Top15['% Renewable']
+    return Top15
+
+
+
+print("A12:" + str(answer_twelve()) + "::Series with a MultiIndex of `Continent`, then the bins for `% Renewable`. Do not include groups with no countries.")
 
 def answer_thirteen():
     import numpy as np
@@ -254,4 +330,4 @@ def answer_thirteen():
     return PopEst
 
 
-print("A13:" + str(answer_thirteen()) + " what")
+print("A13:" + str(type(answer_thirteen())) + " what")
