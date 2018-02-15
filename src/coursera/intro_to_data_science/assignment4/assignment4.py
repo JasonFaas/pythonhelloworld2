@@ -1,4 +1,6 @@
 import pandas as pd
+import numpy as np
+from scipy.stats import ttest_ind
 
 # Use this dictionary to map state names to two letter acronyms
 states = {'OH': 'Ohio', 'KY': 'Kentucky', 'AS': 'American Samoa', 'NV': 'Nevada', 'WY': 'Wyoming', 'NA': 'National', 'AL': 'Alabama', 'MD': 'Maryland', 'AK': 'Alaska', 'UT': 'Utah', 'OR': 'Oregon', 'MT': 'Montana', 'IL': 'Illinois', 'TN': 'Tennessee', 'DC': 'District of Columbia', 'VT': 'Vermont', 'ID': 'Idaho', 'AR': 'Arkansas', 'ME': 'Maine', 'WA': 'Washington', 'HI': 'Hawaii', 'WI': 'Wisconsin', 'MI': 'Michigan', 'IN': 'Indiana', 'NJ': 'New Jersey', 'AZ': 'Arizona', 'GU': 'Guam', 'MS': 'Mississippi', 'PR': 'Puerto Rico', 'NC': 'North Carolina', 'TX': 'Texas', 'SD': 'South Dakota', 'MP': 'Northern Mariana Islands', 'IA': 'Iowa', 'MO': 'Missouri', 'CT': 'Connecticut', 'WV': 'West Virginia', 'SC': 'South Carolina', 'LA': 'Louisiana', 'KS': 'Kansas', 'NY': 'New York', 'NE': 'Nebraska', 'OK': 'Oklahoma', 'FL': 'Florida', 'CA': 'California', 'CO': 'Colorado', 'PA': 'Pennsylvania', 'DE': 'Delaware', 'NM': 'New Mexico', 'RI': 'Rhode Island', 'MN': 'Minnesota', 'VI': 'Virgin Islands', 'NH': 'New Hampshire', 'MA': 'Massachusetts', 'GA': 'Georgia', 'ND': 'North Dakota', 'VA': 'Virginia'}
@@ -18,7 +20,7 @@ def get_region_info():
     region_info = region_info[columns_to_keep]
 
     repl = lambda m: states.get(m.group(0))
-    region_info['State_Full'] = region_info['State'].str.replace(r'.*', repl)
+    region_info['State'] = region_info['State'].str.replace(r'.*', repl)
 
     # print(city_and_region_verifier("AL", "Auburn", census_df))
     # print(city_and_region_verifier("AL", "whatwhatwhat", census_df))
@@ -205,9 +207,14 @@ def convert_housing_data_to_quarters():
     ]
     columns_to_keep_v2 = [
     ]
-    region_info = pd.read_csv('City_Zhvi_AllHomes.csv')
-    for year in range(2000, 2017, 1):
+    region_info = pd.read_csv('City_Zhvi_AllHomes_old.csv')
+    repl = lambda m: states.get(m.group(0))
+    region_info['State'] = region_info['State'].str.replace(r'.*', repl)
+    for year in range(2000, 2016, 1):
         for month in range(1, 13, 1):
+            columns_to_keep.append(str(year) + "-" + str(month).zfill(2))
+    for year in range(2016, 2017, 1):
+        for month in range(1, 9, 1):
             columns_to_keep.append(str(year) + "-" + str(month).zfill(2))
     for year in range(2000, 2016, 1):
         for quarter in range(1, 5, 1):
@@ -218,6 +225,7 @@ def convert_housing_data_to_quarters():
 
     region_info = region_info[columns_to_keep]
     region_info = region_info.set_index(["State","RegionName"])
+    # region_info = region_info.dropna()
 
     for year in range(2000, 2016, 1):
         for quarter in range(1, 5, 1):
@@ -225,22 +233,36 @@ def convert_housing_data_to_quarters():
             first_month = str(year) + "-" + str((quarter - 1) * 3 + 1).zfill(2)
             second_month = str(year) + "-" + str((quarter - 1) * 3 + 2).zfill(2)
             third_month = str(year) + "-" + str((quarter - 1) * 3 + 3).zfill(2)
-            region_info[quarter_str] = (region_info[first_month] + region_info[second_month] + region_info[third_month]) / 3
+            region_info[quarter_str] = region_info[[first_month, second_month, third_month]].mean(axis=1)
     for year in range(2016, 2017, 1):
-        for quarter in range(1, 4, 1):
+        for quarter in range(1, 3, 1):
             quarter_str = str(year) + "q" + str(quarter)
             first_month = str(year) + "-" + str((quarter - 1) * 3 + 1).zfill(2)
             second_month = str(year) + "-" + str((quarter - 1) * 3 + 2).zfill(2)
             third_month = str(year) + "-" + str((quarter - 1) * 3 + 3).zfill(2)
-            region_info[quarter_str] = (region_info[first_month] + region_info[second_month] + region_info[third_month]) / 3
+            region_info[quarter_str] = region_info[[first_month, second_month, third_month]].mean(axis=1)
+
+    for year in range(2016, 2017, 1):
+        for quarter in range(3, 4, 1):
+            quarter_str = str(year) + "q" + str(quarter)
+            first_month = str(year) + "-" + str((quarter - 1) * 3 + 1).zfill(2)
+            second_month = str(year) + "-" + str((quarter - 1) * 3 + 2).zfill(2)
+            region_info[quarter_str] = region_info[[first_month, second_month]].mean(axis=1)
 
     region_info = region_info[columns_to_keep_v2]
 
     # print(region_info[['2000q1', '2000-01', '2000-02', '2000-03']])
 
+    # region_info = region_info[~region_info.index.duplicated(keep=False)]
+
+    # print(region_info.loc["Texas"].loc["Austin"].loc["2010q3"])
+
     return region_info
 
-print("A5:" + str(convert_housing_data_to_quarters()))
+
+# quarters = convert_housing_data_to_quarters()
+# print("A5:" + str(quarters.head()))
+
 
 
 def run_ttest():
@@ -258,6 +280,43 @@ def run_ttest():
     depending on which has a lower mean price ratio (which is equivilent to a
     reduced market loss).'''
 
-    return "ANSWER"
+    all_housing_data = convert_housing_data_to_quarters()
+    found_start = False
+    found_end = False
+    bottom = get_recession_bottom()
+    save_column = []
+    start = get_recession_start()
+    for columns in all_housing_data:
+        if columns == start:
+            found_start = True
+
+        if found_start and not found_end:
+            save_column.append(columns)
+
+        if columns == bottom:
+            found_end = True
+    # print(save_column)
+    all_housing_data = all_housing_data[save_column]
+    all_housing_data = all_housing_data.dropna()
+    # REALLY DROPPING NA ????????????????????????????????????????????????
+    towns = get_list_of_university_towns()
+    towns = towns.set_index(["State","RegionName"])
+    # print(towns)
+
+    towns_merged = pd.merge(all_housing_data, towns, how='inner', left_index=True, right_index=True)
+
+    # df = pd.merge(all_housing_data, towns_merged, on=["State","RegionName"], how='outer', indicator=True)
+    not_towns = pd.concat([all_housing_data, towns_merged]).drop_duplicates(keep=False)
+    # print(towns_merged)
+    #
+    # print(len(all_housing_data))
+    # print(len(towns_merged) + len(not_towns))
+    # print(len(towns_merged))
+    # print(len(towns))
+    # print(len(not_towns))
+    ind = ttest_ind(not_towns, towns_merged)
+    print(ind)
+
+    return (ind)
 
 print("A6:" + str(run_ttest()))
