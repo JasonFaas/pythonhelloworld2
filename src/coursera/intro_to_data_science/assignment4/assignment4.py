@@ -32,7 +32,7 @@ def city_and_region_verifier(state, region_name, region_info):
     return full_boolean
 
 
-print("A0:" + str(get_region_info().head()))
+# print("A0:" + str(get_region_info().head()))
 
 
 def get_list_of_university_towns():
@@ -90,7 +90,26 @@ def get_recession_start():
     '''Returns the year and quarter of the recession start time as a
     string value in a format such as 2005q3'''
 
-    return "ANSWER"
+    energy = pd.read_excel(
+        'gdplev.xls',
+        sheet_name='Sheet1',
+        skiprows=219,
+        usecols=[4, 6],
+        names=['Quarter', 'GDP_2009_Chained_Billions']
+    )
+    energy['next_negative'] = (energy[['GDP_2009_Chained_Billions']] <= energy[['GDP_2009_Chained_Billions']].shift()).any(axis=1)
+    energy['next_positive'] = (energy[['GDP_2009_Chained_Billions']] > energy[['GDP_2009_Chained_Billions']].shift()).any(axis=1)
+    energy['start_rec'] = (energy[['next_negative']] & energy[['next_negative']].shift(-1)).any(axis=1)
+    energy['stop_rec'] = (energy[['next_positive']] & energy[['next_positive']].shift()).any(axis=1)
+    # print(energy.head(20))
+
+    # print(energy.head())
+    for index, row in energy.iterrows():
+        if row.start_rec:
+            return_quarter = row.Quarter
+            break
+
+    return return_quarter
 
 print("A2:" + str(get_recession_start()))
 
@@ -99,7 +118,28 @@ def get_recession_end():
     '''Returns the year and quarter of the recession end time as a
     string value in a format such as 2005q3'''
 
-    return "ANSWER"
+    energy = pd.read_excel(
+        'gdplev.xls',
+        sheet_name='Sheet1',
+        skiprows=219,
+        usecols=[4, 6],
+        names=['Quarter', 'GDP_2009_Chained_Billions']
+    )
+    energy['next_negative'] = (energy[['GDP_2009_Chained_Billions']] <= energy[['GDP_2009_Chained_Billions']].shift()).any(axis=1)
+    energy['next_positive'] = (energy[['GDP_2009_Chained_Billions']] > energy[['GDP_2009_Chained_Billions']].shift()).any(axis=1)
+    energy['start_rec'] = (energy[['next_negative']] & energy[['next_negative']].shift(-1)).any(axis=1)
+    energy['stop_rec'] = (energy[['next_positive']] & energy[['next_positive']].shift()).any(axis=1)
+
+    return_quarter = '2001q1'
+    recession_started = False
+    for index, row in energy.iterrows():
+        if row.start_rec and not recession_started:
+            recession_started = True
+        if recession_started and row.stop_rec:
+            return_quarter = row.Quarter
+            break
+
+    return return_quarter
 
 print("A3:" + str(get_recession_end()))
 
@@ -108,7 +148,37 @@ def get_recession_bottom():
     '''Returns the year and quarter of the recession bottom time as a
     string value in a format such as 2005q3'''
 
-    return "ANSWER"
+    energy = pd.read_excel(
+        'gdplev.xls',
+        sheet_name='Sheet1',
+        skiprows=219,
+        usecols=[4, 6],
+        names=['Quarter', 'GDP_2009_Chained_Billions']
+    )
+    energy['next_negative'] = (
+            energy[['GDP_2009_Chained_Billions']] <= energy[['GDP_2009_Chained_Billions']].shift()).any(axis=1)
+    energy['next_positive'] = (
+            energy[['GDP_2009_Chained_Billions']] > energy[['GDP_2009_Chained_Billions']].shift()).any(axis=1)
+    energy['start_rec'] = (energy[['next_negative']] & energy[['next_negative']].shift(-1)).any(axis=1)
+    energy['stop_rec'] = (energy[['next_positive']] & energy[['next_positive']].shift()).any(axis=1)
+
+    return_quarter = '2001q1'
+    low_gdp = 20 * 1000
+    recession_started = False
+    for index, row in energy.iterrows():
+        if row.start_rec and not recession_started:
+            recession_started = True
+        if recession_started and row.stop_rec:
+            break
+        if recession_started:
+            # print(low_gdp)
+            billions_ = row['GDP_2009_Chained_Billions']
+            if billions_ < low_gdp:
+                low_gdp = billions_
+                return_quarter = row.Quarter
+            # print(str(row.Quarter) + ":" + str(billions_))
+
+    return return_quarter
 
 
 print("A4:" + str(get_recession_bottom()))
@@ -125,8 +195,50 @@ def convert_housing_data_to_quarters():
 
     The resulting dataframe should have 67 columns, and 10,730 rows.
     '''
+    columns_to_keep = [
+        'RegionID',
+        'RegionName',
+        'State',
+        'Metro',
+        'CountyName',
+        "SizeRank"
+    ]
+    columns_to_keep_v2 = [
+    ]
+    region_info = pd.read_csv('City_Zhvi_AllHomes.csv')
+    for year in range(2000, 2017, 1):
+        for month in range(1, 13, 1):
+            columns_to_keep.append(str(year) + "-" + str(month).zfill(2))
+    for year in range(2000, 2016, 1):
+        for quarter in range(1, 5, 1):
+            columns_to_keep_v2.append(str(year) + "q" + str(quarter))
+    for year in range(2016, 2017, 1):
+        for quarter in range(1, 4, 1):
+            columns_to_keep_v2.append(str(year) + "q" + str(quarter))
 
-    return "ANSWER"
+    region_info = region_info[columns_to_keep]
+    region_info = region_info.set_index(["State","RegionName"])
+
+    for year in range(2000, 2016, 1):
+        for quarter in range(1, 5, 1):
+            quarter_str = str(year) + "q" + str(quarter)
+            first_month = str(year) + "-" + str((quarter - 1) * 3 + 1).zfill(2)
+            second_month = str(year) + "-" + str((quarter - 1) * 3 + 2).zfill(2)
+            third_month = str(year) + "-" + str((quarter - 1) * 3 + 3).zfill(2)
+            region_info[quarter_str] = (region_info[first_month] + region_info[second_month] + region_info[third_month]) / 3
+    for year in range(2016, 2017, 1):
+        for quarter in range(1, 4, 1):
+            quarter_str = str(year) + "q" + str(quarter)
+            first_month = str(year) + "-" + str((quarter - 1) * 3 + 1).zfill(2)
+            second_month = str(year) + "-" + str((quarter - 1) * 3 + 2).zfill(2)
+            third_month = str(year) + "-" + str((quarter - 1) * 3 + 3).zfill(2)
+            region_info[quarter_str] = (region_info[first_month] + region_info[second_month] + region_info[third_month]) / 3
+
+    region_info = region_info[columns_to_keep_v2]
+
+    # print(region_info[['2000q1', '2000-01', '2000-02', '2000-03']])
+
+    return region_info
 
 print("A5:" + str(convert_housing_data_to_quarters()))
 
