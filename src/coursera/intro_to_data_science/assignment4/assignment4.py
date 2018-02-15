@@ -14,19 +14,22 @@ print(hello_world())
 
 def get_region_info():
     columns_to_keep = ['RegionID','RegionName','State','Metro','CountyName']
-    census_df = pd.read_csv('City_Zhvi_AllHomes.csv')
-    census_df = census_df[columns_to_keep]
+    region_info = pd.read_csv('City_Zhvi_AllHomes.csv')
+    region_info = region_info[columns_to_keep]
+
+    repl = lambda m: states.get(m.group(0))
+    region_info['State_Full'] = region_info['State'].str.replace(r'.*', repl)
+
     # print(city_and_region_verifier("AL", "Auburn", census_df))
     # print(city_and_region_verifier("AL", "whatwhatwhat", census_df))
     # print(city_and_region_verifier("KA", "Auburn", census_df))
-    # print(auburn_)
-    return census_df
+    return region_info
 
 
-def city_and_region_verifier(state, region_name, census_df):
-    auburn_ = census_df.loc[census_df['RegionName'] == region_name]
-    al_ = len(auburn_.loc[auburn_['State'] == state]) == 1
-    return al_
+def city_and_region_verifier(state, region_name, region_info):
+    city_info = region_info.loc[region_info['RegionName'] == region_name]
+    full_boolean = len(city_info.loc[city_info['State_Full'] == state]) == 1
+    return full_boolean
 
 
 print("A0:" + str(get_region_info().head()))
@@ -60,34 +63,27 @@ def get_list_of_university_towns():
             state = str.strip(city_or_state)
             state = state[0:state.index('[')]
             # print(state)
-        elif city_or_state.__contains__(" ("):
-            city = city_or_state[0:city_or_state.index(" (")]
+        elif city_or_state.__contains__(" (") or city_or_state.__contains__(','):
+            city = city_or_state
+            if city.__contains__(" ("):
+                city = city[0:city_or_state.index(" (")]
             if city.__contains__(','):
                 # print("WHAT::" + city)
-                city = city[0:city_or_state.index(",")]
+                city = city[0:city.index(",")]
             # else:
-            df.loc[counter] = [state, city]
-            counter += 1
-        elif city_or_state.__contains__(', South Central College'):
-            city = city_or_state[0:city_or_state.index(", South Central College")]
-            df.loc[counter] = [state, city]
-            counter += 1
+
+            if city_and_region_verifier(state, city, region_info):
+                # print("WHERE:" + city + "::" + state + "::" + city_or_state)
+            # else:
+                df.loc[counter] = [state, city]
+                counter += 1
         # else:
         #     print("Subcontext::" + city_or_state)
 
-    # df
-
-    # what_df = pd.DataFrame([["Michigan", "Ann Arbor"]],
-    # columns=["State", "RegionName"])
-    # what_df.
-    # what_df.append(["Michigan", "Yipsilanti"] )
-    # bad_df = pd.DataFrame([["Michigan", "Ann Arbor"], ["Michigan", "Yipsilanti"]],
-    #           columns=["State", "RegionName"])
-    # bad_df = bad_df.
     # print(len(df))
     return df
 
-print("A1:" + str(get_list_of_university_towns().head()))
+print("A1:" + str(get_list_of_university_towns().head(200)))
 
 
 def get_recession_start():
