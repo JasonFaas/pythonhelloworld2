@@ -46,7 +46,7 @@ def get_list_of_university_towns():
     1. For "State", removing characters from "[" to the end.
     2. For "RegionName", when applicable, removing every character from " (" to the end.
     3. Depending on how you read the data, you may need to remove newline character '\n'. '''
-    region_info = get_region_info()
+    # region_info = get_region_info()
 
     f = open('university_towns.txt', 'r')
     message = f.read()
@@ -63,27 +63,27 @@ def get_list_of_university_towns():
             state = str.strip(city_or_state)
             state = state[0:state.index('[')]
             # print(state)
-        elif city_or_state.__contains__(" (") or city_or_state.__contains__(','):
+        elif len(city_or_state) > 5:
             city = city_or_state
             if city.__contains__(" ("):
                 city = city[0:city_or_state.index(" (")]
-            if city.__contains__(','):
+            # if city.__contains__(','):
                 # print("WHAT::" + city)
-                city = city[0:city.index(",")]
+                # city = city[0:city.index(",")]
             # else:
 
-            if city_and_region_verifier(state, city, region_info):
+            # if city_and_region_verifier(state, city, region_info):
                 # print("WHERE:" + city + "::" + state + "::" + city_or_state)
             # else:
-                df.loc[counter] = [state, city]
-                counter += 1
+            df.loc[counter] = [state, city]
+            counter += 1
         # else:
         #     print("Subcontext::" + city_or_state)
 
     # print(len(df))
     return df
 
-print("A1:" + str(get_list_of_university_towns().head(200)))
+print("A1:" + str(get_list_of_university_towns().head()))
 
 
 def get_recession_start():
