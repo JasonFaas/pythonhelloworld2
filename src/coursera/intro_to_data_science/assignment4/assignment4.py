@@ -314,9 +314,21 @@ def run_ttest():
     # print(len(towns_merged))
     # print(len(towns))
     # print(len(not_towns))
-    ind = ttest_ind(not_towns, towns_merged)
-    print(ind)
+    towns_merged['price_ratio'] = towns_merged[start]/towns_merged[bottom]
+    not_towns['price_ratio'] = not_towns[start]/not_towns[bottom]
+    ind = ttest_ind(not_towns['price_ratio'], towns_merged['price_ratio'])
+    # print(type(ind))
+    # print(ind.pvalue)
+    towns_merged_mean = towns_merged['price_ratio'].mean()
+    # print(towns_merged_mean)
+    not_towns_mean = not_towns['price_ratio'].mean()
+    # print(not_towns_mean)
+    better = 'what'
+    if towns_merged_mean < not_towns_mean:
+        better = 'university town'
+    else:
+        better = 'non-university town'
 
-    return (ind)
+    return (ind.pvalue < 0.01, ind.pvalue, better)
 
 print("A6:" + str(run_ttest()))
