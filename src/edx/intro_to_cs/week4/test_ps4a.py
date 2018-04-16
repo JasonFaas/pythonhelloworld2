@@ -50,6 +50,14 @@ def test_playHand(wordlist):
         print("FAILURE: FIX THIS!!()")
         print("FAILURE: FIX THIS!!()")
 
+def test_playGame(wordlist):
+    # success = False
+    # hand = {'h': 1, 'i': 1, 'm': 1}
+    # hand = {'h': 1, 'i': 1, 'c': 1, 'z': 1, 'm': 2, 'a': 1}
+    # assert len(hand.keys()) == 3
+    playGame(wordList)
+    print("SUCCESS: test_getWordScore()")
+
 
 
 def test_updateHand():
@@ -229,5 +237,8 @@ test_calculateHandlen()
 print("----------------------------------------------------------------------")
 print("Testing playHand(hand)...")
 test_playHand(wordList)
+print("----------------------------------------------------------------------")
+print("Testing playGame(wordList)...")
+test_playGame(wordList)
 print("----------------------------------------------------------------------")
 print("All done!")
