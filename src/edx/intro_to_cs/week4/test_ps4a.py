@@ -8,6 +8,17 @@ from ps4a import *
 
 # To run these tests, simply run this file (open up in your IDE, then run the file as normal)
 
+def test_calculateHandlen():
+    handOrig = {'a': 1, 'q': 1, 'l': 2, 'm': 1, 'u': 1, 'i': 1}
+    hand_length = calculateHandlen(handOrig)
+    expected_hand_length = 7
+    if hand_length == expected_hand_length:
+        print("SUCCESS: test_calculateHandlen()")
+    else:
+        print("FAILURE: test_getWordScore()")
+        print("Received " + str(hand_length) + " but expected " + str(expected_hand_length))
+
+
 def test_getWordScore():
     """
     Unit test for getWordScore
@@ -25,6 +36,20 @@ def test_getWordScore():
         print("SUCCESS: test_getWordScore()")
 
 # end of test_getWordScore
+
+
+def test_playHand(wordlist):
+    success = False
+    hand = {'h': 1, 'i': 1, 'm': 1}
+    # hand = {'h': 1, 'i': 1, 'c': 1, 'z': 1, 'm': 2, 'a': 1}
+    assert len(hand.keys()) == 3
+    playHand(hand, wordList, 3)
+    if success:
+        print("SUCCESS: test_getWordScore()")
+    else:
+        print("FAILURE: FIX THIS!!()")
+        print("FAILURE: FIX THIS!!()")
+
 
 
 def test_updateHand():
@@ -190,13 +215,19 @@ def test_isValidWord(wordList):
 
 wordList = loadWords()
 print("----------------------------------------------------------------------")
-print("Testing getWordScore...")
+print("Testing getWordScore(word, hand_count)...")
 test_getWordScore()
 print("----------------------------------------------------------------------")
-print("Testing updateHand...")
+print("Testing updateHand(hand, word)...")
 test_updateHand()
 print("----------------------------------------------------------------------")
-print("Testing isValidWord...")
+print("Testing isValidWord(word, hand, wordList)...")
 test_isValidWord(wordList)
+print("----------------------------------------------------------------------")
+print("Testing calculateHandlen(hand)...")
+test_calculateHandlen()
+print("----------------------------------------------------------------------")
+print("Testing playHand(hand)...")
+test_playHand(wordList)
 print("----------------------------------------------------------------------")
 print("All done!")
