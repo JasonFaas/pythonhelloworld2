@@ -28,7 +28,27 @@ def addCaseShiftToDictionary(case, dictionary_what, shift):
             char_shift -= len(case)
         dictionary_what[base_char] = chr(char_shift)
 
+def apply_shift(message_text, shift):
+    '''
+    Applies the Caesar Cipher to self.message_text with the input shift.
+    Creates a new string that is self.message_text shifted down the
+    alphabet by some number of characters determined by the input shift
+
+    shift (integer): the shift with which to encrypt the message.
+    0 <= shift < 26
+
+    Returns: the message text (string) in which every character is shifted
+         down the alphabet by the input shift
+    '''
+    shift_dict = build_shift_dict(shift)
+    shifted_string = ""
+    for unshifted_char in message_text:
+        shifted_string += shift_dict.get(unshifted_char)
+    return shifted_string
+
 
 print(build_shift_dict(3))
-print(string.ascii_letters)
-print(string.ascii_lowercase)
+print(apply_shift("abcdef", 3))
+print(apply_shift("abcdef", 2) == "cdefgh")
+# print(string.ascii_letters)
+# print(string.ascii_lowercase)
