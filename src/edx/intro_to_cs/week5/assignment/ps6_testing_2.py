@@ -132,6 +132,7 @@ class PlaintextMessage(Message):
         '''
         super().__init__(text)
         self.shift = shift
+        self.encrypting_dict = self.get_encrypting_dict()
 
     def get_shift(self):
         '''
