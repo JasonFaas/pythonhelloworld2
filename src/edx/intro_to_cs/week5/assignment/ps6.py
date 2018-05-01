@@ -130,7 +130,10 @@ class Message(object):
         shift_dict = self.build_shift_dict(shift)
         shifted_string = ""
         for unshifted_char in self.message_text:
-            shifted_string += shift_dict.get(unshifted_char)
+            if unshifted_char in shift_dict:
+                shifted_string += shift_dict.get(unshifted_char)
+            else:
+                shifted_string += unshifted_char
         return shifted_string
 
 class PlaintextMessage(Message):

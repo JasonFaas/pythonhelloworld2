@@ -43,12 +43,15 @@ def apply_shift(message_text, shift):
     shift_dict = build_shift_dict(shift)
     shifted_string = ""
     for unshifted_char in message_text:
-        shifted_string += shift_dict.get(unshifted_char)
+        if unshifted_char in shift_dict:
+            shifted_string += shift_dict.get(unshifted_char)
+        else:
+            shifted_string += unshifted_char
     return shifted_string
 
 
 print(build_shift_dict(3))
-print(apply_shift("abcdef", 3))
-print(apply_shift("abcdef", 2) == "cdefgh")
+print(apply_shift("abc def", 3))
+print(apply_shift("abc def", 2) == "cde fgh")
 # print(string.ascii_letters)
 # print(string.ascii_lowercase)
