@@ -183,7 +183,7 @@ class CiphertextMessage(Message):
             self.message_text (string, determined by input text)
             self.valid_words (list, determined using helper function load_words)
         '''
-        pass  # delete this line and replace with your code here
+        super().__init__(text)
 
     def decrypt_message(self):
         '''
@@ -201,14 +201,41 @@ class CiphertextMessage(Message):
         Returns: a tuple of the best shift value used to decrypt the message
         and the decrypted message text using that shift value
         '''
-        pass  # delete this line and replace with your code here
+        best_shift_count = -1
+        best_shift_value = -1
+        best_shift_string = ""
+        for shift_value in range(0, 26):
+            shiftie = self.apply_shift(shift_value)
+            split = shiftie.split(' ')
+            current_shift_count = 0
+            for single_split_word in split:
+                if is_word(self.valid_words, single_split_word):
+                    current_shift_count += 1
+            if current_shift_count > best_shift_count:
+                best_shift_string = shiftie
+                best_shift_value = shift_value
+                best_shift_count = current_shift_count
+        return (best_shift_value, best_shift_string)
 
 
 #Example test case (PlaintextMessage)
-plaintext = PlaintextMessage('hello', 2)
-print(plaintext.get_message_text_encrypted())
-print('jgnnq' == plaintext.get_message_text_encrypted())
-print(plaintext.get_shift() == 2)
-plaintext.change_shift(3)
-print(plaintext.get_shift() == 3)
-print('khoor' == plaintext.get_message_text_encrypted())
+original_plain_text = 'hello my name is test'
+plaintext = PlaintextMessage(original_plain_text, 6)
+encrypted_text = plaintext.get_message_text_encrypted()
+print(encrypted_text)
+# print('jgnnq' == plaintext.get_message_text_encrypted())
+# print(plaintext.get_shift() == 2)
+# plaintext.change_shift(3)
+# print(plaintext.get_shift() == 3)
+# print('khoor' == plaintext.get_message_text_encrypted())
+
+cipher_text_message = CiphertextMessage(encrypted_text)
+# print(plaintext.get_message_text_encrypted())
+decrytped_message = cipher_text_message.decrypt_message()
+print(decrytped_message)
+print(type(decrytped_message))
+print(original_plain_text == decrytped_message)
+# print(plaintext.get_shift() == 2)
+# plaintext.change_shift(3)
+# print(plaintext.get_shift() == 3)
+# print('khoor' == plaintext.get_message_text_encrypted())
