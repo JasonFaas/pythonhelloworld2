@@ -3,7 +3,7 @@ import cv2 as cv
 
 show_img = False
 
-img = cv.imread('../hellocv/Charmand_Razor_Leaf.jpg')
+img = cv.imread('../resources/Charmand_Razor_Leaf.jpg')
 px = img[100, 100]
 print(px)
 

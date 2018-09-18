@@ -8,21 +8,25 @@ y = np.uint8([10])
 
 # print(x+y)
 
-a = cv.imread('a.jpg')
-b = cv.imread('b.jpg')
+a = cv.imread('../resources/a.jpg')
+b = cv.imread('../resources/b.jpg')
 
 #merge 2 images with be having greater emphasis
-dst = cv.addWeighted(b, .7, a, .3, 0)
+dst = cv.addWeighted(b, .5, a, .5, 0)
 cv.imshow('dst', dst)
 
 #putting image c on top of image b, negating background color
-c = cv.imread('small_insert.jpg')
+c = cv.imread('../resources/small_insert.jpg')
 rows, cols, channels = c.shape
 b_roi = b[0:rows, 0:cols]
 c_as_hsv = cv.cvtColor(c, cv.COLOR_BGR2HSV)
 c_h, c_s, c_v = cv.split(c_as_hsv)
-hue_ret, hue_mask = cv.threshold(c_h, 90, 110, cv.THRESH_BINARY)
-hue_ret, hue_mask = cv.threshold(hue_mask, 1, 255, cv.THRESH_BINARY)
+
+hue_min = 90
+hue_max = 110
+hue_ret, hue_mask_min = cv.threshold(c_h, hue_min, 255, cv.THRESH_BINARY)
+hue_ret, hue_mask_max = cv.threshold(c_h, hue_max, 255, cv.THRESH_BINARY_INV)
+hue_mask = cv.bitwise_and(hue_mask_min, hue_mask_max)
 
 sat_ret, sat_mask = cv.threshold(c_s, 210, 255, cv.THRESH_BINARY)
 
