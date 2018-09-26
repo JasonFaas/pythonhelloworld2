@@ -36,6 +36,5 @@ img3 = cv.drawMatches(img1, kp1, img2, kp2, matches[:10], outImg=None, flags=2)
 cv.imshow("1 org", img1)
 cv.imshow("2 org", img2)
 cv.imshow("3 res", img3)
-cv.imshow("4 res", img4)
 cv.waitKey(0) & 0xFF
 cv.destroyAllWindows()
